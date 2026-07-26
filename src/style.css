@@ -201,17 +201,17 @@ body {
 .game-layout {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.4rem;
   flex: 1;
 }
 
 .canvas-wrapper {
   position: relative;
   width: 100%;
-  height: 65vh;
-  min-height: 280px;
+  flex: 1;
+  min-height: 260px;
   background: var(--canvas-bg);
-  border: 2px solid var(--primary-color);
+  border: 2.5px solid var(--primary-color);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-glow);
   overflow: hidden;
@@ -224,10 +224,11 @@ body {
 
 #game-canvas {
   width: 100%;
-  height: 100%;
-  object-fit: contain;
+  height: auto;
+  aspect-ratio: 1000 / 400;
   display: block;
   background: var(--canvas-bg);
+  object-fit: contain;
 }
 
 .canvas-controls-overlay {
@@ -392,58 +393,54 @@ body {
   border: 1px solid rgba(59, 130, 246, 0.3);
 }
 
-/* PIP WEBCAM (Com destaque em celulares) */
+/* PIP WEBCAM */
 .pip-card {
   background: var(--bg-surface);
-  border: 2px solid var(--accent-color);
+  border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
-  padding: 0.6rem 0.8rem;
-  box-shadow: 0 4px 18px rgba(16, 185, 129, 0.2);
+  padding: 0.4rem 0.6rem;
+  box-shadow: var(--shadow-sm);
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  gap: 0.75rem;
+  gap: 0.5rem;
 }
 
 .pip-header {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.35rem;
+  align-items: center;
+  gap: 0.4rem;
 }
 
 .pip-title {
   font-weight: 700;
-  font-size: 0.82rem;
-  color: var(--text-main);
+  font-size: 0.75rem;
 }
 
 .pose-badge {
-  font-size: 0.62rem;
+  font-size: 0.6rem;
   font-weight: 700;
-  padding: 3px 8px;
-  border-radius: 12px;
+  padding: 2px 6px;
+  border-radius: 10px;
 }
 .pose-badge.off {
   background: var(--bg-surface-elevated);
   color: var(--text-muted);
 }
 .pose-badge.active {
-  background: rgba(16, 185, 129, 0.25);
+  background: rgba(16, 185, 129, 0.2);
   color: var(--accent-color);
-  border: 1px solid rgba(16, 185, 129, 0.4);
 }
 
 .pip-video-wrapper {
   position: relative;
-  width: 135px;
-  height: 98px;
+  width: 80px;
+  height: 55px;
   background: #000;
   border-radius: var(--radius-sm);
   overflow: hidden;
-  border: 2px solid var(--accent-color);
-  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--border-color);
   flex-shrink: 0;
 }
 
@@ -467,13 +464,13 @@ body {
 
 .gesture-indicator {
   position: absolute;
-  bottom: 0.25rem;
+  bottom: 0.2rem;
   left: 50%;
   transform: translateX(-50%);
-  padding: 2px 7px;
+  padding: 1px 5px;
   border-radius: 10px;
   font-family: var(--font-retro);
-  font-size: 0.5rem;
+  font-size: 0.45rem;
   letter-spacing: 0.5px;
   white-space: nowrap;
 }
@@ -492,82 +489,8 @@ body {
 
 
 
-/* Mobile Landscape Mode (Celular na Horizontal) */
-@media (orientation: landscape) and (max-width: 900px) {
-  #app {
-    padding: 0.3rem 0.5rem;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
-
-  .app-header {
-    display: none;
-  }
-
-  .game-layout {
-    display: grid;
-    grid-template-columns: 1fr 210px;
-    gap: 0.5rem;
-    align-items: center;
-    flex: 1;
-    height: 100%;
-  }
-
-  .canvas-wrapper {
-    height: calc(100vh - 1rem);
-    max-height: 92vh;
-    min-height: auto;
-    aspect-ratio: 1000 / 400;
-  }
-
-  #game-canvas {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-  }
-
-  .pip-card {
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 0.5rem;
-    gap: 0.4rem;
-    height: calc(100vh - 1rem);
-    max-height: 92vh;
-    border: 2px solid var(--accent-color);
-  }
-
-  .pip-header {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    gap: 0.2rem;
-  }
-
-  .pip-title {
-    font-size: 0.75rem;
-  }
-
-  .pose-badge {
-    font-size: 0.6rem;
-  }
-
-  .pip-video-wrapper {
-    width: 100%;
-    height: auto;
-    aspect-ratio: 4 / 3;
-    max-height: 130px;
-  }
-
-  .app-footer {
-    display: none;
-  }
-}
-
 /* Desktop Specs */
-@media (min-width: 901px) {
+@media (min-width: 768px) {
   #app {
     padding: 1.25rem;
   }
@@ -577,30 +500,14 @@ body {
   }
 
   .canvas-wrapper {
-    height: auto;
     min-height: 400px;
-    max-height: none;
-    aspect-ratio: 1000 / 400;
-  }
-
-  #game-canvas {
-    height: auto;
-    aspect-ratio: 1000 / 400;
+    flex: initial;
   }
 
   .pip-card {
     flex-direction: column;
     padding: 0.8rem;
     gap: 0.6rem;
-    border-color: var(--border-color);
-    box-shadow: var(--shadow-sm);
-  }
-
-  .pip-header {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
   }
 
   .pip-video-wrapper {
@@ -608,8 +515,9 @@ body {
     height: auto;
     aspect-ratio: 4 / 3;
     max-height: 240px;
-    border-color: var(--border-color);
   }
+
+
 
   .game-layout {
     display: grid;
