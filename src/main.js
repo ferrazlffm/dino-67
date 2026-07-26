@@ -63,20 +63,14 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         onStatusChange: (status, label) => {
           hud.updatePoseStatus(status, label);
+        },
+        onPoseUpdate: (handRaised, lastMetrics) => {
+          hud.updateGestureIndicator(handRaised, lastMetrics);
         }
       });
     }
 
-    const success = await poseTracker.init();
-    if (success) {
-      const updateHUDLoop = () => {
-        if (poseTracker && poseTracker.isTracking) {
-          hud.updateGestureIndicator(poseTracker.handRaised, poseTracker.lastMetrics);
-          requestAnimationFrame(updateHUDLoop);
-        }
-      };
-      updateHUDLoop();
-    }
+    await poseTracker.init();
   };
 
   btnCamera.addEventListener('click', () => {
