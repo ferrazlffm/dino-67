@@ -109,6 +109,15 @@
               </form>
             </div>
 
+            <!-- Container de Estatísticas Pessoais no Game Over -->
+            <div id="gameover-stats-container" class="gameover-stats-container" style="display: none;">
+              <div class="stats-grid">
+                <div class="stat-item"><span class="stat-label">Partidas</span><span id="stat-games" class="stat-val">0</span></div>
+                <div class="stat-item"><span class="stat-label">Média</span><span id="stat-avg" class="stat-val">0</span></div>
+                <div class="stat-item"><span class="stat-label">Maior Seq. Pulos</span><span id="stat-jumps" class="stat-val">0</span></div>
+              </div>
+            </div>
+
             <!-- Status da Câmera -->
             <div id="camera-prompt-status" class="status-box warning">
               <span class="status-dot"></span>
@@ -118,6 +127,9 @@
             <div class="modal-buttons">
               <button id="btn-start-game" class="btn btn-xl btn-accent" disabled title="Ative a câmera para jogar">
                 JOGAR AGORA
+              </button>
+              <button id="btn-share-score" class="btn btn-secondary" style="display: none;">
+                📤 Compartilhar Recorde
               </button>
               <button id="btn-show-ranking" class="btn btn-secondary" style="display: none;">
                 🏆 Ver Ranking Top 5

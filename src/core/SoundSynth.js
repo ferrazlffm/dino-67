@@ -205,6 +205,79 @@ export class SoundSynth {
       console.warn('Erro ao tocar som de contagem:', e);
     }
   }
+
+  /**
+   * Som de transição de fase (arpejo épico)
+   */
+  playPhaseTransition() {
+    if (!this.enabled) return;
+    this.init();
+    if (!this.ctx) return;
+    try {
+      const now = this.ctx.currentTime;
+      const notes = [440, 554.37, 659.25, 880]; // A4, C#5, E5, A5
+      notes.forEach((freq, index) => {
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(freq, now + index * 0.08);
+        gain.gain.setValueAtTime(0.25, now + index * 0.08);
+        gain.gain.linearRampToValueAtTime(0.001, now + (index + 1) * 0.08);
+        osc.connect(gain);
+        gain.connect(this.masterGain || this.ctx.destination);
+        osc.start(now + index * 0.08);
+        osc.stop(now + (index + 1) * 0.08);
+      });
+    } catch (e) {}
+  }
+
+  /**
+   * Som de coleta de power-up (brilho arpejado rápido)
+   */
+  playPowerUpCollect() {
+    if (!this.enabled) return;
+    this.init();
+    if (!this.ctx) return;
+    try {
+      const now = this.ctx.currentTime;
+      const notes = [523.25, 783.99, 1046.50]; // C5, G5, C6
+      notes.forEach((freq, index) => {
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, now + index * 0.05);
+        gain.gain.setValueAtTime(0.2, now + index * 0.05);
+        gain.gain.linearRampToValueAtTime(0.001, now + (index + 1) * 0.05);
+        osc.connect(gain);
+        gain.connect(this.masterGain || this.ctx.destination);
+        osc.start(now + index * 0.05);
+        osc.stop(now + (index + 1) * 0.05);
+      });
+    } catch (e) {}
+  }
+
+  /**
+   * Som de escudo quebrando/absorvendo colisão
+   */
+  playShieldBreak() {
+    if (!this.enabled) return;
+    this.init();
+    if (!this.ctx) return;
+    try {
+      const now = this.ctx.currentTime;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(800, now);
+      osc.frequency.exponentialRampToValueAtTime(200, now + 0.15);
+      gain.gain.setValueAtTime(0.25, now);
+      gain.gain.linearRampToValueAtTime(0.001, now + 0.15);
+      osc.connect(gain);
+      gain.connect(this.masterGain || this.ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.15);
+    } catch (e) {}
+  }
 }
 
 export const soundSynth = new SoundSynth();

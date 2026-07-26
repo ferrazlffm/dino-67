@@ -35,8 +35,42 @@ export class Obstacle {
       case 'PTERODACTYL':
         this.width = 46;
         this.height = 32;
-        // Altura de voo que exige um pulo no momento certo
         this.y = this.groundY - 65; 
+        break;
+      case 'BAT_LOW':
+        this.width = 36;
+        this.height = 24;
+        this.y = this.groundY - 60;
+        break;
+      case 'BAT_HIGH':
+        this.width = 36;
+        this.height = 24;
+        this.y = this.groundY - 85;
+        break;
+      case 'TOMBSTONE':
+        this.width = 24;
+        this.height = 36;
+        this.y = this.groundY - this.height;
+        break;
+      case 'TOMBSTONE_DOUBLE':
+        this.width = 48;
+        this.height = 36;
+        this.y = this.groundY - this.height;
+        break;
+      case 'LAVA_ROCK':
+        this.width = 26;
+        this.height = 34;
+        this.y = this.groundY - this.height;
+        break;
+      case 'LAVA_ROCK_DOUBLE':
+        this.width = 50;
+        this.height = 34;
+        this.y = this.groundY - this.height;
+        break;
+      case 'FIREBALL':
+        this.width = 38;
+        this.height = 24;
+        this.y = this.groundY - 65;
         break;
       default:
         this.width = 20;
@@ -53,10 +87,10 @@ export class Obstacle {
       this.markedForRemoval = true;
     }
 
-    // Animação de batimento de asas para Pterodáctilo
-    if (this.type === 'PTERODACTYL') {
+    // Animação de asas (Pterodáctilo e Morcegos)
+    if (this.type === 'PTERODACTYL' || this.type.startsWith('BAT')) {
       this.wingTimer += deltaTime;
-      if (this.wingTimer > 150) {
+      if (this.wingTimer > 120) {
         this.wingFrame = (this.wingFrame === 0) ? 1 : 0;
         this.wingTimer = 0;
       }
@@ -80,7 +114,6 @@ export class Obstacle {
 
     const x = Math.round(this.x);
     const y = Math.round(this.y);
-    const p = 2; // pixel scale
 
     if (this.type.startsWith('CACTUS')) {
       // Desenho de Cactos em Pixel Art
@@ -88,36 +121,108 @@ export class Obstacle {
 
       for (let c = 0; c < count; c++) {
         const offset = c * 22;
-        // Haste central do cacto
         ctx.fillRect(x + offset + 6, y, 8, 40);
-        // Braço esquerdo
         ctx.fillRect(x + offset + 2, y + 12, 4, 16);
         ctx.fillRect(x + offset + 2, y + 24, 8, 4);
-        // Braço direito
         ctx.fillRect(x + offset + 14, y + 8, 4, 16);
         ctx.fillRect(x + offset + 10, y + 20, 8, 4);
       }
     } else if (this.type === 'PTERODACTYL') {
-      // Desenho do Pterodáctilo em Pixel Art
-      // Cabeça & Bico
       ctx.fillRect(x + 30, y + 10, 14, 6);
-      ctx.fillRect(x + 40, y + 12, 6, 2); // Bico pontudo
-      ctx.fillRect(x + 32, y + 8, 4, 2);  // Olho
+      ctx.fillRect(x + 40, y + 12, 6, 2);
+      ctx.fillRect(x + 32, y + 8, 4, 2);
 
-      // Tronco
       ctx.fillRect(x + 14, y + 12, 18, 8);
-      ctx.fillRect(x + 6, y + 14, 8, 4);  // Cauda
+      ctx.fillRect(x + 6, y + 14, 8, 4);
 
-      // Asas (Alterna posição em wingFrame 0 vs 1)
       if (this.wingFrame === 0) {
-        // Asa para cima
         ctx.fillRect(x + 18, y + 0, 8, 12);
         ctx.fillRect(x + 12, y + 2, 6, 8);
       } else {
-        // Asa para baixo
         ctx.fillRect(x + 18, y + 20, 8, 12);
         ctx.fillRect(x + 12, y + 18, 6, 8);
       }
+    } else if (this.type.startsWith('BAT')) {
+      // Morcego em Pixel Art
+      ctx.fillRect(x + 14, y + 8, 8, 10); // Corpinho
+      ctx.fillRect(x + 16, y + 4, 4, 4);  // Cabeça
+      ctx.fillRect(x + 14, y + 2, 2, 3);  // Orelha esq
+      ctx.fillRect(x + 20, y + 2, 2, 3);  // Orelha dir
+
+      if (this.wingFrame === 0) {
+        // Asas levantadas
+        ctx.fillRect(x + 2, y + 2, 12, 6);
+        ctx.fillRect(x + 22, y + 2, 12, 6);
+      } else {
+        // Asas apontando para baixo
+        ctx.fillRect(x + 2, y + 12, 12, 6);
+        ctx.fillRect(x + 22, y + 12, 12, 6);
+      }
+    } else if (this.type.startsWith('TOMBSTONE')) {
+      // Lápides de cemitério em Pixel Art detalhado (Noite)
+      const count = this.type === 'TOMBSTONE' ? 1 : 2;
+      for (let c = 0; c < count; c++) {
+        const offset = c * 24;
+
+        // Base da lápide (Pedestal de pedra no solo)
+        ctx.fillRect(x + offset + 1, y + 30, 22, 6);
+
+        // Corpo principal da lápide (Pedra de topo arredondado gótico)
+        ctx.fillRect(x + offset + 7, y, 10, 2);
+        ctx.fillRect(x + offset + 5, y + 2, 14, 4);
+        ctx.fillRect(x + offset + 3, y + 6, 18, 24);
+
+        // Destaque de iluminação de luar na borda esquerda
+        ctx.save();
+        ctx.fillStyle = 'rgba(180, 210, 255, 0.4)';
+        ctx.fillRect(x + offset + 3, y + 6, 2, 24);
+        ctx.fillRect(x + offset + 5, y + 2, 2, 4);
+        ctx.restore();
+
+        // Entalhe de Cruz Latina no topo (Recorte)
+        ctx.clearRect(x + offset + 11, y + 8, 2, 10);
+        ctx.clearRect(x + offset + 8, y + 11, 8, 2);
+
+        // Entalhe das letras "R I P" (Recortes em pixel art)
+        // 'R'
+        ctx.clearRect(x + offset + 6, y + 21, 3, 5);
+        ctx.fillRect(x + offset + 7, y + 22, 1, 1); // Preenche meio do R
+        // 'I'
+        ctx.clearRect(x + offset + 11, y + 21, 2, 5);
+        // 'P'
+        ctx.clearRect(x + offset + 15, y + 21, 3, 5);
+        ctx.fillRect(x + offset + 16, y + 22, 1, 1); // Preenche meio do P
+
+        // Rachadura de desgate de tempo no canto superior direito (Recorte)
+        ctx.clearRect(x + offset + 18, y + 6, 2, 3);
+        ctx.clearRect(x + offset + 16, y + 9, 2, 2);
+      }
+    } else if (this.type.startsWith('LAVA_ROCK')) {
+      // Rochas de lava (Vulcão)
+      const count = this.type === 'LAVA_ROCK' ? 1 : 2;
+      for (let c = 0; c < count; c++) {
+        const offset = c * 24;
+        ctx.fillRect(x + offset + 4, y, 18, 8);
+        ctx.fillRect(x + offset, y + 8, 26, 26);
+        // Fissura de magma brilhante
+        ctx.save();
+        ctx.fillStyle = '#ff4500';
+        ctx.fillRect(x + offset + 8, y + 12, 4, 14);
+        ctx.fillRect(x + offset + 12, y + 18, 6, 4);
+        ctx.restore();
+      }
+    } else if (this.type === 'FIREBALL') {
+      // Bola de Fogo
+      ctx.fillStyle = '#ff4500';
+      ctx.fillRect(x + 12, y + 4, 20, 16);
+      ctx.fillRect(x + 8, y + 8, 28, 8);
+      // Núcleo amarelo
+      ctx.fillStyle = '#ffee00';
+      ctx.fillRect(x + 18, y + 8, 10, 8);
+      // Rastro de fogo
+      ctx.fillStyle = '#ff0000';
+      ctx.fillRect(x, y + 8, 8, 8);
+      ctx.fillRect(x + 4, y + 6, 8, 12);
     }
 
     ctx.restore();
