@@ -1,7 +1,4 @@
-/**
- * HUD.js
- * Gerenciador de Interface do Usuário (HUD), placares, botões de ação e modais de pré-configuração.
- */
+import { soundSynth } from '../core/SoundSynth.js';
 
 export class HUD {
   constructor() {
@@ -15,6 +12,11 @@ export class HUD {
     this.modalIcon = document.getElementById('modal-icon');
     this.btnStartGame = document.getElementById('btn-start-game');
     this.pregameSetupEl = document.getElementById('pregame-setup');
+
+    // Overlay de Contagem Regressiva
+    this.countdownOverlay = document.getElementById('countdown-overlay');
+    this.countdownNumber = document.getElementById('countdown-number');
+    this.countdownTimer = null;
 
     // Botões Overlay
     this.btnTheme = document.getElementById('btn-theme');
@@ -47,6 +49,55 @@ export class HUD {
     this.hiScoreEl.textContent = this.formatScore(highScore);
   }
 
+  startCountdown(onComplete) {
+    if (this.countdownTimer) {
+      clearInterval(this.countdownTimer);
+      this.countdownTimer = null;
+    }
+
+    this.modalScreen.classList.remove('active');
+
+    if (!this.countdownOverlay || !this.countdownNumber) {
+      if (onComplete) onComplete();
+      return;
+    }
+
+    this.countdownOverlay.classList.add('active');
+
+    let count = 3;
+    this.countdownNumber.classList.remove('go');
+    this.countdownNumber.textContent = count.toString();
+    this.countdownNumber.style.animation = 'none';
+    void this.countdownNumber.offsetHeight;
+    this.countdownNumber.style.animation = 'popCount 0.4s ease-out';
+
+    soundSynth.playCountdown(false);
+
+    this.countdownTimer = setInterval(() => {
+      count--;
+      if (count > 0) {
+        this.countdownNumber.classList.remove('go');
+        this.countdownNumber.textContent = count.toString();
+        this.countdownNumber.style.animation = 'none';
+        void this.countdownNumber.offsetHeight;
+        this.countdownNumber.style.animation = 'popCount 0.4s ease-out';
+        soundSynth.playCountdown(false);
+      } else if (count === 0) {
+        this.countdownNumber.classList.add('go');
+        this.countdownNumber.textContent = 'VAI!';
+        this.countdownNumber.style.animation = 'none';
+        void this.countdownNumber.offsetHeight;
+        this.countdownNumber.style.animation = 'popCount 0.4s ease-out';
+        soundSynth.playCountdown(true);
+      } else {
+        clearInterval(this.countdownTimer);
+        this.countdownTimer = null;
+        this.countdownOverlay.classList.remove('active');
+        if (onComplete) onComplete();
+      }
+    }, 1000);
+  }
+
   showStartModal(onStart) {
     this.modalIcon.textContent = '🦖';
     this.modalTitle.textContent = 'CONFIGURAÇÃO INICIAL';
@@ -62,8 +113,7 @@ export class HUD {
 
     this.btnStartGame.onclick = () => {
       if (!this.btnStartGame.disabled && this.isCameraActive) {
-        this.modalScreen.classList.remove('active');
-        onStart();
+        this.startCountdown(onStart);
       }
     };
   }
@@ -79,8 +129,7 @@ export class HUD {
     this.modalScreen.classList.add('active');
 
     this.btnStartGame.onclick = () => {
-      this.modalScreen.classList.remove('active');
-      onResume();
+      this.startCountdown(onResume);
     };
   }
 
@@ -95,8 +144,7 @@ export class HUD {
     this.modalScreen.classList.add('active');
 
     this.btnStartGame.onclick = () => {
-      this.modalScreen.classList.remove('active');
-      onRestart();
+      this.startCountdown(onRestart);
     };
   }
 

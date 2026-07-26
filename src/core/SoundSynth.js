@@ -172,6 +172,39 @@ export class SoundSynth {
       console.warn('Erro ao tocar som de colisão:', e);
     }
   }
+
+  /**
+   * Efeito sonoro para a contagem regressiva (Beep 440Hz / Final 880Hz)
+   */
+  playCountdown(isFinal = false) {
+    if (!this.enabled) return;
+    this.init();
+    if (!this.ctx) return;
+
+    if (this.ctx.state === 'suspended') {
+      this.ctx.resume();
+    }
+
+    try {
+      const now = this.ctx.currentTime;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(isFinal ? 880 : 440, now);
+
+      gain.gain.setValueAtTime(0.2, now);
+      gain.gain.linearRampToValueAtTime(0.001, now + (isFinal ? 0.2 : 0.1));
+
+      osc.connect(gain);
+      gain.connect(this.masterGain || this.ctx.destination);
+
+      osc.start(now);
+      osc.stop(now + (isFinal ? 0.2 : 0.1));
+    } catch (e) {
+      console.warn('Erro ao tocar som de contagem:', e);
+    }
+  }
 }
 
 export const soundSynth = new SoundSynth();

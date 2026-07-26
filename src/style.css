@@ -560,3 +560,58 @@ body {
   color: var(--text-muted);
   padding: 0.2rem 0;
 }
+
+/* ==========================================================================
+   Overlay de Contagem Regressiva para Início do Jogo
+   ========================================================================== */
+
+.countdown-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(9, 13, 22, 0.75);
+  backdrop-filter: blur(6px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 19;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.countdown-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.countdown-number {
+  font-family: var(--font-retro);
+  font-size: 4rem;
+  color: var(--neon-green);
+  text-shadow: 0 0 20px var(--neon-green), 0 0 40px rgba(0, 255, 204, 0.6);
+  user-select: none;
+}
+
+.countdown-number.go {
+  color: var(--accent-color);
+  text-shadow: 0 0 20px var(--accent-color), 0 0 40px rgba(16, 185, 129, 0.8);
+  font-size: 3.2rem;
+}
+
+@keyframes popCount {
+  0% {
+    transform: scale(0.3);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.35);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
