@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Dino 67</title>
+  <meta name="description" content="Jogo Dino 67 controlado por gestos corporais via webcam." />
+  
+  <!-- Google Fonts: Press Start 2P (Retro Arcade) & Outfit (UI) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Press+Start+2P&display=swap" rel="stylesheet">
+  
+  <!-- MediaPipe Pose & Camera Utils CDN Fallbacks -->
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js" crossorigin="anonymous"></script>
+  
+  <link rel="stylesheet" href="/src/style.css" />
+</head>
+<body>
+  <div id="app">
+    <!-- Header / Navbar (Oculto no Mobile) -->
+    <header class="app-header">
+      <div class="logo">
+        <span class="dino-icon">🦖</span>
+        <div class="title-group">
+          <h1>DINO 67</h1>
+          <span class="badge">Webcam & Touch</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Workspace: Game Container + PIP Webcam -->
+    <main class="game-layout">
+      <!-- Game Canvas Container com Controles Integrados -->
+      <div class="canvas-wrapper" id="canvas-wrapper">
+        <canvas id="game-canvas" width="1000" height="400"></canvas>
+
+        <!-- Controles Flutuantes Integrados no Canto Superior Esquerdo -->
+        <div class="canvas-controls-overlay">
+          <button id="btn-theme" class="icon-btn canvas-btn" title="Alternar Tema (Claro/Escuro)" aria-label="Alternar Tema">
+            <span class="theme-icon">🌙</span>
+          </button>
+          <button id="btn-sound" class="icon-btn canvas-btn" title="Alternar Som" aria-label="Alternar Som">
+            <span class="sound-icon">🔊</span>
+          </button>
+          <button id="btn-camera" class="btn btn-primary canvas-btn" title="Configurar Câmera">
+            <span class="cam-icon">📷</span> <span class="cam-text">Câmera</span>
+          </button>
+        </div>
+        
+        <!-- HUD Score Board Overlay no Canto Superior Direito -->
+        <div id="hud-overlay" class="hud-overlay">
+          <div class="score-container">
+            <span class="hi-label">HI</span> <span id="hi-score">00000</span>
+            <span class="score-divider">|</span>
+            <span id="current-score">00000</span>
+          </div>
+        </div>
+
+        <!-- Start / Pause / Game Over Screens -->
+        <div id="modal-screen" class="modal-overlay active">
+          <div class="modal-content">
+            <div id="modal-icon" class="modal-emoji">🦖</div>
+            <h2 id="modal-title">CONFIGURAÇÃO INICIAL</h2>
+            <p id="modal-desc">
+              Configure suas preferências e ative a webcam para iniciar o jogo por gestos!
+            </p>
+
+            <!-- Painel de Configuração Pré-Jogo -->
+            <div id="pregame-setup" class="pregame-setup">
+              <div class="setup-controls-row">
+                <button id="modal-btn-theme" class="btn btn-secondary setup-btn" title="Alternar Tema">
+                  <span class="theme-icon">🌙</span> <span class="theme-label">Tema Escuro</span>
+                </button>
+
+                <button id="modal-btn-sound" class="btn btn-secondary setup-btn" title="Alternar Som">
+                  <span class="sound-icon">🔊</span> <span class="sound-label">Som Ligado</span>
+                </button>
+              </div>
+
+              <div class="setup-camera-row">
+                <button id="modal-btn-camera" class="btn btn-primary btn-block setup-cam-btn">
+                  📷 Ativar e Configurar Câmera
+                </button>
+              </div>
+            </div>
+
+            <!-- Status da Câmera -->
+            <div id="camera-prompt-status" class="status-box warning">
+              <span class="status-dot"></span>
+              <span class="status-msg">⚠️ Conecte a câmera acima para habilitar o botão de início!</span>
+            </div>
+
+            <div class="modal-buttons">
+              <button id="btn-start-game" class="btn btn-xl btn-accent" disabled title="Ative a câmera para jogar">
+                JOGAR AGORA
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PIP Webcam Container -->
+      <aside id="pip-container" class="pip-card">
+        <div class="pip-header">
+          <span class="pip-title">📷 Detecção de movimentos</span>
+          <span id="pose-status" class="pose-badge off">Desativado</span>
+        </div>
+        
+        <div class="pip-video-wrapper">
+          <video id="webcam-video" playsinline muted autoplay></video>
+          <canvas id="pip-canvas" width="320" height="240"></canvas>
+          
+          <!-- Motion Trigger Alert Overlay -->
+          <div id="gesture-indicator" class="gesture-indicator grounded">
+            <span id="gesture-text">CHÃO</span>
+          </div>
+        </div>
+
+      </aside>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p>MediaPipe Pose • Canvas 2D • Web Audio API</p>
+    </footer>
+  </div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

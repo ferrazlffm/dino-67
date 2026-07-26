@@ -1,0 +1,19 @@
+{
+  "name": "dino-67",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host",
+    "start": "vite --host",
+    "build": "vite build",
+    "preview": "vite preview --host"
+  },
+  "dependencies": {
+    "@mediapipe/camera_utils": "latest",
+    "@mediapipe/pose": "latest"
+  },
+  "devDependencies": {
+    "vite": "^5.4.1"
+  }
+}
