@@ -1,22 +1,25 @@
 <!DOCTYPE html>
 <html lang="pt-BR" data-theme="dark">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Dino 67</title>
   <meta name="description" content="Jogo Dino 67 controlado por gestos corporais via webcam." />
-  
+
   <!-- Google Fonts: Press Start 2P (Retro Arcade) & Outfit (UI) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Press+Start+2P&display=swap" rel="stylesheet">
-  
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Press+Start+2P&display=swap"
+    rel="stylesheet">
+
   <!-- MediaPipe Pose & Camera Utils CDN Fallbacks -->
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js" crossorigin="anonymous"></script>
-  
+
   <link rel="stylesheet" href="/src/style.css" />
 </head>
+
 <body>
   <div id="app">
     <!-- Header / Navbar (Oculto no Mobile) -->
@@ -25,7 +28,6 @@
         <span class="dino-icon">🦖</span>
         <div class="title-group">
           <h1>DINO 67</h1>
-          <span class="badge">Webcam & Touch</span>
         </div>
       </div>
     </header>
@@ -38,17 +40,21 @@
 
         <!-- Controles Flutuantes Integrados no Canto Superior Esquerdo -->
         <div class="canvas-controls-overlay">
-          <button id="btn-theme" class="icon-btn canvas-btn" title="Alternar Tema (Claro/Escuro)" aria-label="Alternar Tema">
+          <button id="btn-theme" class="icon-btn canvas-btn" title="Alternar Tema (Claro/Escuro)"
+            aria-label="Alternar Tema">
             <span class="theme-icon">🌙</span>
           </button>
           <button id="btn-sound" class="icon-btn canvas-btn" title="Alternar Som" aria-label="Alternar Som">
             <span class="sound-icon">🔊</span>
           </button>
+          <button id="btn-ranking" class="icon-btn canvas-btn" title="Ranking Top 5" aria-label="Ranking Top 5">
+            <span class="ranking-icon">🏆</span>
+          </button>
           <button id="btn-camera" class="btn btn-primary canvas-btn" title="Configurar Câmera">
             <span class="cam-icon">📷</span> <span class="cam-text">Câmera</span>
           </button>
         </div>
-        
+
         <!-- HUD Score Board Overlay no Canto Superior Direito -->
         <div id="hud-overlay" class="hud-overlay">
           <div class="score-container">
@@ -91,6 +97,18 @@
               </div>
             </div>
 
+            <!-- Formulário de Entrada no Ranking (Game Over / Recorde) -->
+            <div id="ranking-input-container" class="ranking-input-container" style="display: none;">
+              <p class="ranking-subtext">🎉 Você entrou no <strong>TOP 5 RANKING GLOBAL</strong>!</p>
+              <form id="ranking-form" class="ranking-form" onsubmit="return false;">
+                <input type="text" id="player-name-input" class="ranking-input" maxlength="10" placeholder="SEU NOME"
+                  autocomplete="off" required />
+                <button type="submit" id="btn-submit-score" class="btn btn-accent btn-block">
+                  💾 SALVAR RECORD
+                </button>
+              </form>
+            </div>
+
             <!-- Status da Câmera -->
             <div id="camera-prompt-status" class="status-box warning">
               <span class="status-dot"></span>
@@ -101,6 +119,25 @@
               <button id="btn-start-game" class="btn btn-xl btn-accent" disabled title="Ative a câmera para jogar">
                 JOGAR AGORA
               </button>
+              <button id="btn-show-ranking" class="btn btn-secondary" style="display: none;">
+                🏆 Ver Ranking Top 5
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal do Ranking Top 5 -->
+        <div id="ranking-modal" class="modal-overlay">
+          <div class="modal-content ranking-modal-content">
+            <div class="modal-header-row">
+              <h2>🏆 TOP 5 RANKING GLOBAL</h2>
+              <button id="btn-close-ranking" class="close-btn" aria-label="Fechar Modal">&times;</button>
+            </div>
+            <div id="ranking-list" class="ranking-list">
+              <p class="loading-text">Carregando pontuações...</p>
+            </div>
+            <div class="modal-buttons" style="margin-top: 15px;">
+              <button id="btn-close-ranking-footer" class="btn btn-secondary btn-block">FECHAR</button>
             </div>
           </div>
         </div>
@@ -112,11 +149,11 @@
           <span class="pip-title">📷 Detecção de movimentos</span>
           <span id="pose-status" class="pose-badge off">Desativado</span>
         </div>
-        
+
         <div class="pip-video-wrapper">
           <video id="webcam-video" playsinline muted autoplay></video>
           <canvas id="pip-canvas" width="320" height="240"></canvas>
-          
+
           <!-- Motion Trigger Alert Overlay -->
           <div id="gesture-indicator" class="gesture-indicator grounded">
             <span id="gesture-text">CHÃO</span>
@@ -134,4 +171,5 @@
 
   <script type="module" src="/src/main.js"></script>
 </body>
+
 </html>

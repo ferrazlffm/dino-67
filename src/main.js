@@ -90,42 +90,34 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Suporte a Toque na Tela para Dispositivos Mobile (Touch / Tap to Jump)
-  const handleTouchJump = (e) => {
-    // Evita acionar se o toque ocorreu em botões do modal ou overlays
-    if (e.target.closest('.modal-content') || e.target.closest('.header-actions') || e.target.closest('.canvas-controls-overlay')) {
+  // Pulo ativado EXCLUSIVAMENTE por gestos (PoseTracker).
+  // Toque na Tela / Clique / Teclado agora PAUSAM a partida se o jogo estiver em andamento.
+  const handleInteractionPause = (e) => {
+    // Evita acionar se o toque/clique ocorreu em botões do modal, controles ou pip
+    if (e.target.closest('.modal-content') || e.target.closest('.canvas-controls-overlay') || e.target.closest('.pip-card')) {
       return;
     }
-    // No Game Over, a partida só reinicia pelo botão "Jogar Novamente"
-    if (engine.state === 'GAMEOVER' || engine.state === 'READY') {
-      return;
+    if (engine.state === 'PLAYING') {
+      e.preventDefault();
+      engine.pause();
     }
-    e.preventDefault();
-    engine.triggerJump();
   };
 
-  canvasWrapper.addEventListener('touchstart', handleTouchJump, { passive: false });
-  canvasWrapper.addEventListener('mousedown', (e) => {
-    if (e.target.id === 'game-canvas' && engine.state === 'PLAYING') {
-      engine.triggerJump();
-    }
-  });
+  canvasWrapper.addEventListener('touchstart', handleInteractionPause, { passive: false });
+  canvasWrapper.addEventListener('mousedown', handleInteractionPause);
 
-  // Controles de Teclado (Fallback)
+  // Pressionar QUALQUER tecla durante o jogo PAUSA a partida
   window.addEventListener('keydown', (e) => {
-    if (e.code === 'Space' || e.code === 'ArrowUp') {
+    if (engine.state === 'PLAYING') {
       e.preventDefault();
-      engine.triggerJump();
-    } else if (e.code === 'KeyP' || e.code === 'Escape') {
+      engine.pause();
+    } else if (engine.state === 'PAUSED' && (e.code === 'Space' || e.code === 'KeyP' || e.code === 'Escape')) {
       e.preventDefault();
-      if (engine.state === 'PLAYING') {
-        engine.pause();
-      } else if (engine.state === 'PAUSED') {
-        engine.resume();
-      }
+      engine.resume();
     }
   });
 
   // Renderiza quadro estático inicial no canvas
   engine.render();
 });
+
