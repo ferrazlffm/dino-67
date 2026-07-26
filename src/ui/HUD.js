@@ -48,6 +48,12 @@ export class HUD {
     this.metricRightWrist = document.getElementById('metric-right-wrist');
     this.cameraPromptStatus = document.getElementById('camera-prompt-status');
 
+    this.btnShareScore = document.getElementById('btn-share-score');
+    this.gameoverStatsContainer = document.getElementById('gameover-stats-container');
+    this.statGames = document.getElementById('stat-games');
+    this.statAvg = document.getElementById('stat-avg');
+    this.statJumps = document.getElementById('stat-jumps');
+
     this.isDarkMode = true;
     this.isSoundOn = true;
     this.isCameraActive = false;
@@ -176,6 +182,9 @@ export class HUD {
     if (this.btnRanking) this.btnRanking.style.display = 'flex';
     if (this.btnCamera) this.btnCamera.style.display = 'inline-flex';
     if (this.btnTheme) this.btnTheme.style.display = 'flex';
+    if (this.gameoverStatsContainer) this.gameoverStatsContainer.style.display = 'none';
+    if (this.btnShareScore) this.btnShareScore.style.display = 'none';
+
     this.modalIcon.textContent = '🦖';
     this.modalTitle.textContent = 'CONFIGURAÇÃO INICIAL';
     this.modalDesc.innerHTML = '<strong>A câmera precisa estar conectada</strong> para liberar o jogo!';
@@ -208,6 +217,9 @@ export class HUD {
     if (this.btnRanking) this.btnRanking.style.display = 'flex';
     if (this.btnCamera) this.btnCamera.style.display = 'inline-flex';
     if (this.btnTheme) this.btnTheme.style.display = 'flex';
+    if (this.gameoverStatsContainer) this.gameoverStatsContainer.style.display = 'none';
+    if (this.btnShareScore) this.btnShareScore.style.display = 'none';
+
     this.modalIcon.textContent = '⏸️';
     this.modalTitle.textContent = 'JOGO PAUSADO';
     this.modalDesc.textContent = 'Clique abaixo para continuar a partida.';
@@ -224,17 +236,44 @@ export class HUD {
     };
   }
 
-  async showGameOverModal(finalScore, highScore, isNewRecord, onRestart) {
+  async showGameOverModal(finalScore, highScore, isNewRecord, stats, phaseName, onRestart) {
     if (this.btnRanking) this.btnRanking.style.display = 'flex';
     if (this.btnCamera) this.btnCamera.style.display = 'inline-flex';
     if (this.btnTheme) this.btnTheme.style.display = 'flex';
     this.modalIcon.textContent = isNewRecord ? '🏆' : '💀';
     this.modalTitle.textContent = isNewRecord ? 'NOVO RECORDE!' : 'GAME OVER';
-    this.modalDesc.innerHTML = `Sua pontuação: <strong>${this.formatScore(finalScore)}</strong><br/>Maior pontuação: <strong>${this.formatScore(highScore)}</strong>`;
+    this.modalDesc.innerHTML = `Sua pontuação: <strong>${this.formatScore(finalScore)}</strong> (${phaseName || 'DESERTO'})<br/>Maior pontuação: <strong>${this.formatScore(highScore)}</strong>`;
     this.pregameSetupEl.style.display = 'none';
     if (this.btnShowRanking) this.btnShowRanking.style.display = 'flex';
 
-    // Verifica se a pontuação se qualifica para o Top 10
+    // Atualiza container de estatísticas
+    if (stats && this.gameoverStatsContainer) {
+      this.gameoverStatsContainer.style.display = 'block';
+      if (this.statGames) this.statGames.textContent = stats.totalGames || 0;
+      if (this.statAvg) this.statAvg.textContent = Math.floor(stats.totalScore / (stats.totalGames || 1));
+      if (this.statJumps) this.statJumps.textContent = stats.maxJumpsSequence || 0;
+    }
+
+    // Botão de compartilhar recorde
+    if (this.btnShareScore) {
+      this.btnShareScore.style.display = 'inline-flex';
+      this.btnShareScore.onclick = () => {
+        const shareText = `🦖 Fiz ${this.formatScore(finalScore)} pontos no Dino 67 na fase ${phaseName || 'DESERTO'}! Consegue me superar? Jogue agora: ${window.location.href}`;
+        if (navigator.share) {
+          navigator.share({
+            title: 'Dino 67 - Meu Recorde',
+            text: shareText,
+            url: window.location.href
+          }).catch(() => {});
+        } else if (navigator.clipboard) {
+          navigator.clipboard.writeText(shareText).then(() => {
+            alert('📋 Link e pontuação copiados para a área de transferência!');
+          });
+        }
+      };
+    }
+
+    // Verifica se a pontuação se qualifica para o Top 5
     const qualifies = await rankingService.isTopScore(finalScore);
 
     if (qualifies && this.rankingInputContainer) {
@@ -259,7 +298,6 @@ export class HUD {
           this.btnSubmitScore.textContent = '✅ RECORD SALVO!';
           this.rankingInputContainer.style.display = 'none';
 
-          // Abre a modal do ranking para mostrar a nova posição do jogador
           await this.openRankingModal();
         };
       }
