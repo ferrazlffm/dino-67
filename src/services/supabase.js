@@ -9,11 +9,12 @@ let supabase = null;
 if (SUPABASE_URL && SUPABASE_ANON_KEY) {
   try {
     supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    console.log('[Supabase] Cliente inicializado com a URL:', SUPABASE_URL);
   } catch (err) {
     console.warn('[Supabase] Erro ao inicializar cliente:', err);
   }
 } else {
-  console.info('[Supabase] VITE_SUPABASE_URL e VITE_SUPABASE_ANON_KEY não configurados. Usando modo de fallback em localStorage.');
+  console.warn('[Supabase] AVISO: VITE_SUPABASE_URL e VITE_SUPABASE_ANON_KEY não foram encontradas durante o build! Usando fallback localStorage.');
 }
 
 const LOCAL_STORAGE_RANKING_KEY = 'dino67_ranking_top5';
